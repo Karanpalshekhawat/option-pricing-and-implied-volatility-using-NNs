@@ -1,2 +1,2 @@
-# pricing-options-and-computing-implied-volatility-using-deep-neural-network
-Approach to learn non linear relationship with option parameters and it's price using Deep Neural network
+
+An approach to learn non linear relationship between option parameters and it's price using Deep Neural Network
