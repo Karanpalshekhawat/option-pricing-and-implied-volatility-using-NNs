@@ -61,7 +61,7 @@ short_description = "An approach to learn non linear relationship between option
 url = 'https://github.com/Karanpalshekhawat/pricing-options-and-computing-implied-volatility-using-deep-neural-network'
 
 setup(
-    name='pricing-options-and-computing-implied-volatility-using-deep-neural-network',
+    name='option-price-using-NN',
     version=version,
     description=short_description,
     long_description=long_description,

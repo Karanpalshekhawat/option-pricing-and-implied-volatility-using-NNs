@@ -1,11 +1,13 @@
 """
-In this file, I have added methods that
-are used to generate input parameters and
-compute intermediary calculations
+In this module, I have added methods that
+are used to generate range of input parameters
+and then compute sampling using LHS
+Also, it contains methods to read input variables
 """
 
 import json
-
+import yaml
+import pandas as pd
 from scipy.stats import qmc
 
 
@@ -16,7 +18,7 @@ def read_input_parameters_range():
     purpose
     """
     pt = r"./model/static_data/"
-    json_file = pt + "input-parameters-range.json"
+    json_file = pt + "parameters-range.json"
     with open(json_file) as f:
         data = json.load(f)
 
@@ -34,9 +36,22 @@ def create_set_of_input_parameters(rng):
     """
     dimension = len(rng)
     sampler = qmc.LatinHypercube(d=dimension)
-    sample = sampler(n=1000)
+    sample = sampler.random(n=100000)
     l_bounds = [items[0] for items in rng.values()]
     u_bounds = [items[1] for items in rng.values()]
     sample_scaled = qmc.scale(sample, l_bounds, u_bounds)
 
     return sample_scaled
+
+
+def read_input_variables_file():
+    """
+    This method reads input variables yaml file
+    and returns it as a dataframe
+    """
+    pt = r"./model/static_data/"
+    yml_file = pt + "input_variables.yml"
+    with open(yml_file) as file:
+        df = pd.json_normalize(yaml.safe_load(file))
+
+    return df
