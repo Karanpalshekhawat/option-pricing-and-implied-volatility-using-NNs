@@ -16,6 +16,9 @@ def read_input_parameters_range():
     Reading input parameters range to create set of
     dataset that will be used for training and testing
     purpose
+
+    Returns:
+        dict
     """
     pt = r"./model/static_data/"
     json_file = pt + "parameters-range.json"
@@ -25,15 +28,16 @@ def read_input_parameters_range():
     return data
 
 
-def create_set_of_input_parameters(rng):
+def create_set_of_input_parameters():
     """
     Using range of Input parameters defined in json file,
     a set of options parameters range is created using
     Latin hypercube sampling.
 
-    Args:
-        rng (dict): input parameters range
+    Returns:
+        pd.DataFrame
     """
+    rng = read_input_parameters_range()
     dimension = len(rng)
     sampler = qmc.LatinHypercube(d=dimension)
     sample = sampler.random(n=100000)

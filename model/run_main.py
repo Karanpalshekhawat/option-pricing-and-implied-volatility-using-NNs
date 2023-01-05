@@ -7,8 +7,11 @@ create output file
 
 import datetime
 
-from pandas.tseries.offsets import BDay
+from model import *
 
 if __name__ == "__main__":
     date = datetime.datetime.today()
-    bz_day = date - BDay(-1)
+    df = read_input_variables_file()
+    ticker = df['ticker'].iloc[0]
+    st_current_price = get_current_price(ticker)
+    range_of_inputs = create_set_of_input_parameters()
