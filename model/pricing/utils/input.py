@@ -44,8 +44,8 @@ def create_set_of_input_parameters():
     l_bounds = [items[0] for items in rng.values()]
     u_bounds = [items[1] for items in rng.values()]
     sample_scaled = qmc.scale(sample, l_bounds, u_bounds)
-
-    return sample_scaled
+    df = pd.DataFrame(sample_scaled, columns=['moneyness', 'time_to_maturity', 'risk_free_rate', 'volatility'])
+    return df
 
 
 def read_input_variables_file():

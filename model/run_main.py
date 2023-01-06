@@ -15,3 +15,4 @@ if __name__ == "__main__":
     ticker = df['ticker'].iloc[0]
     st_current_price = get_current_price(ticker)
     range_of_inputs = create_set_of_input_parameters()
+    option_df = create_dataset(df, st_current_price, range_of_inputs)
