@@ -25,5 +25,20 @@ def pre_processing():
     return option_df
 
 
+def run_model(dt_set):
+    """
+    This method split data set into train, test and then
+    creates model, finds the best possible hyperparameter,
+    stores them to a file and then predict its accuracy on
+    the test set.
+
+    Args:
+        dt_set (pd.DataFrame) : dataset
+    """
+    nn_obj = create_nn_architecture(dt_set)
+    return
+
+
 if __name__ == "__main__":
     dt_set = pre_processing()
+    nn_model = run_model(dt_set)
