@@ -1,6 +1,77 @@
-yaml~=0.2.5
-pyyaml~=6.0
-pandas~=1.5.2
-scipy~=1.10.0
-yfinance~=0.2.3
-setuptools~=65.5.1
+absl-py==1.3.0
+appdirs @ file:///home/conda/feedstock_root/build_artifacts/appdirs_1603108395799/work
+astunparse==1.6.3
+beautifulsoup4==4.11.1
+brotlipy @ file:///Users/runner/miniforge3/conda-bld/brotlipy_1666764759924/work
+cachetools==5.2.0
+certifi==2022.12.7
+cffi @ file:///Users/runner/miniforge3/conda-bld/cffi_1666754817555/work
+charset-normalizer @ file:///home/conda/feedstock_root/build_artifacts/charset-normalizer_1661170624537/work
+colorama @ file:///home/conda/feedstock_root/build_artifacts/colorama_1666700638685/work
+conda==22.11.1
+conda-package-handling @ file:///Users/runner/miniforge3/conda-bld/conda-package-handling_1666837675978/work
+contourpy==1.0.6
+cryptography @ file:///Users/runner/miniforge3/conda-bld/cryptography_1667424024887/work
+cycler==0.11.0
+flatbuffers==23.1.4
+fonttools==4.38.0
+frozendict==2.3.4
+gast==0.4.0
+google-auth==2.15.0
+google-auth-oauthlib==0.4.6
+google-pasta==0.2.0
+grpcio==1.51.1
+h5py==3.7.0
+html5lib==1.1
+idna @ file:///home/conda/feedstock_root/build_artifacts/idna_1663625384323/work
+keras==2.11.0
+kiwisolver==1.4.4
+libclang==14.0.6
+lxml==4.9.2
+Markdown==3.4.1
+MarkupSafe==2.1.1
+matplotlib==3.6.2
+multitasking==0.0.11
+numpy @ file:///Users/runner/miniforge3/conda-bld/numpy_1672415800930/work
+oauthlib==3.2.2
+opt-einsum==3.3.0
+option-price==0.2.0
+packaging @ file:///home/conda/feedstock_root/build_artifacts/packaging_1670530880680/work
+pandas==1.5.2
+Pillow==9.4.0
+pluggy @ file:///home/conda/feedstock_root/build_artifacts/pluggy_1667232663820/work
+pooch @ file:///home/conda/feedstock_root/build_artifacts/pooch_1643032624649/work
+protobuf==3.19.6
+pyasn1==0.4.8
+pyasn1-modules==0.2.8
+pycosat @ file:///Users/runner/miniforge3/conda-bld/pycosat_1666836623787/work
+pycparser @ file:///home/conda/feedstock_root/build_artifacts/pycparser_1636257122734/work
+pyOpenSSL @ file:///home/conda/feedstock_root/build_artifacts/pyopenssl_1665350324128/work
+pyparsing==3.0.9
+PySocks @ file:///home/conda/feedstock_root/build_artifacts/pysocks_1661604839144/work
+python-dateutil==2.8.2
+pytz==2022.7
+PyYAML==6.0
+requests @ file:///home/conda/feedstock_root/build_artifacts/requests_1661872987712/work
+requests-oauthlib==1.3.1
+rsa==4.9
+ruamel-yaml-conda @ file:///Users/runner/miniforge3/conda-bld/ruamel_yaml_1666819987451/work
+ruamel.yaml @ file:///Users/runner/miniforge3/conda-bld/ruamel.yaml_1666827372049/work
+ruamel.yaml.clib @ file:///Users/runner/miniforge3/conda-bld/ruamel.yaml.clib_1670412881259/work
+scipy==1.10.0
+six==1.16.0
+soupsieve==2.3.2.post1
+tensorboard==2.11.0
+tensorboard-data-server==0.6.1
+tensorboard-plugin-wit==1.8.1
+tensorflow-estimator==2.11.0
+tensorflow-macos==2.11.0
+termcolor==2.2.0
+toolz @ file:///home/conda/feedstock_root/build_artifacts/toolz_1657485559105/work
+tqdm @ file:///home/conda/feedstock_root/build_artifacts/tqdm_1662214488106/work
+typing_extensions==4.4.0
+urllib3 @ file:///home/conda/feedstock_root/build_artifacts/urllib3_1658789158161/work
+webencodings==0.5.1
+Werkzeug==2.2.2
+wrapt==1.14.1
+yfinance==0.2.3
