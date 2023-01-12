@@ -20,10 +20,10 @@ def create_nn_architecture(input_features):
         Sequential
     """
     model = tf.keras.Sequential([
-        tf.keras.layers.Input(shape=(input_features.shape[1],)),
-        tf.keras.layers.Dense(400, activation="relu"),
-        tf.keras.layers.Dense(400, activation="relu"),
-        tf.keras.layers.Dense(400, activation="relu"),
+        tf.keras.layers.Dense(400, activation="relu", kernel_initializer='he_normal',
+                              input_shape=(input_features.shape[1],)),
+        tf.keras.layers.Dense(400, activation="relu", kernel_initializer='he_normal'),
+        tf.keras.layers.Dense(400, activation="relu", kernel_initializer='he_normal'),
         tf.keras.layers.Dense(1)
     ])
     return model
@@ -40,14 +40,16 @@ def run_model(dt_set):
         dt_set (pd.DataFrame) : dataset
     """
     feature_columns = ['moneyness', 'time_to_maturity', 'risk_free_rate', 'volatility']
-    input_features = tf.convert_to_tensor(dt_set[feature_columns])
-    target = tf.convert_to_tensor(dt_set.pop('opt_price_by_strike'))
+    input_features = dt_set[feature_columns]
+    target = dt_set['opt_price_by_strike']
     nn_obj = create_nn_architecture(input_features)
     """
     Loss function is the one where the model is trained but
     you can always define multiple metrics where you want to
-    measure the performance of the model
+    track the performance of the model
     """
     nn_obj.compile(optimizer='adam', loss='mean_squared_error', metrics=['mse'])
     x_train, x_test, y_train, y_test = train_test_split(input_features, target, test_size=0.2)
+    nn_obj.fit(x_train, y_train, epochs=5)
+    mse = nn_obj.evaluate(x_test, y_test)
     return nn_obj
