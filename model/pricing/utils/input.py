@@ -59,3 +59,20 @@ def read_input_variables_file():
         df = pd.json_normalize(yaml.safe_load(file))
 
     return df
+
+
+def read_hyper_parameters_range():
+    """
+    Reading input parameters range to create set of
+    dataset that will be used for training and testing
+    purpose
+
+    Returns:
+        dict
+    """
+    pt = r"./model/static_data/"
+    json_file = pt + "hyper-parameters-range.json"
+    with open(json_file) as f:
+        data = json.load(f)
+
+    return data
