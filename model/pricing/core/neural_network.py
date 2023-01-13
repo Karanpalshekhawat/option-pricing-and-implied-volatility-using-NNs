@@ -33,16 +33,21 @@ def find_best_hyper_parameter_config(df_hyper_param, dt_set):
 
     def model_define_and_evaluate(row):
         """Define model and test it"""
-        model_ind = tf.keras.Sequential([
-            tf.keras.layers.Dense(row['neurons'], activation=row['activation'],
-                                  kernel_initializer=row['initialization'],
-                                  input_shape=(input_features.shape[1],)),
-            tf.keras.layers.Dense(row['neurons'], activation=row['activation'],
-                                  kernel_initializer=row['initialization']),
-            tf.keras.layers.Dense(row['neurons'], activation=row['activation'],
-                                  kernel_initializer=row['initialization']),
-            tf.keras.layers.Dense(1)
-        ])
+        model_ind = tf.keras.Sequential()
+        model_ind.add(tf.keras.layers.Dense(row['neurons'], activation=row['activation'],
+                                            kernel_initializer=row['initialization'],
+                                            input_shape=(input_features.shape[1],)))
+        if row['batch_normalisation'] == "yes":
+            model_ind.add(tf.keras.layers.BatchNormalization())
+        model_ind.add(tf.keras.layers.Dense(row['neurons'], activation=row['activation'],
+                                            kernel_initializer=row['initialization']))
+        if row['batch_normalisation'] == "yes":
+            model_ind.add(tf.keras.layers.BatchNormalization())
+        model_ind.add(tf.keras.layers.Dense(row['neurons'], activation=row['activation'],
+                                            kernel_initializer=row['initialization']))
+        if row['batch_normalisation'] == "yes":
+            model_ind.add(tf.keras.layers.BatchNormalization())
+        model_ind.add(tf.keras.layers.Dense(1))
         model_ind.compile(optimizer=row['optimizer'], loss='mean_squared_error', metrics=['mse'])
         model_ind.fit(x_train, y_train, epochs=20, batch_size=row['batch_size'], verbose=0)
         mse = model_ind.evaluate(x_test, y_test)[0]
@@ -78,6 +83,7 @@ def create_set_of_hyperparameter():
     combinations = list(itertools.product(*ls_param))
     columns_name = ['activation', 'neurons', 'drop_out', 'initialization', 'batch_normalisation', 'optimizer',
                     'batch_size']
+
     return pd.DataFrame(combinations, columns=columns_name)
 
 
