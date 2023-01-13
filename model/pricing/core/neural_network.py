@@ -25,36 +25,34 @@ def find_best_hyper_parameter_config(df_hyper_param, dt_set):
     Returns:
         Sequential
     """
+    global final_model
     feature_columns = ['moneyness', 'time_to_maturity', 'risk_free_rate', 'volatility']
     input_features = dt_set[feature_columns]
     target = dt_set['opt_price_by_strike']
-    x_train, x_test, y_train, y_test = train_test_split(input_features, target, test_size=0.2)
+    x_train, x_test, y_train, y_test = train_test_split(input_features, target, test_size=0.2, random_state=11)
 
     def model_define_and_evaluate(row):
-        model = tf.keras.Sequential([
-            tf.keras.layers.Dense(row['neurons'], activation=row['activation'], kernel_initializer=row['initialization'],
+        """Define model and test it"""
+        model_ind = tf.keras.Sequential([
+            tf.keras.layers.Dense(row['neurons'], activation=row['activation'],
+                                  kernel_initializer=row['initialization'],
                                   input_shape=(input_features.shape[1],)),
-            tf.keras.layers.Dense(row['neurons'], activation=row['activation'], kernel_initializer=row['initialization']),
-            tf.keras.layers.Dense(row['neurons'], activation=row['activation'], kernel_initializer=row['initialization']),
+            tf.keras.layers.Dense(row['neurons'], activation=row['activation'],
+                                  kernel_initializer=row['initialization']),
+            tf.keras.layers.Dense(row['neurons'], activation=row['activation'],
+                                  kernel_initializer=row['initialization']),
             tf.keras.layers.Dense(1)
         ])
-        model.compile(optimizer=row['optimizer'], loss='mean_squared_error', metrics=['mse'])
-        model.fit(x_train, y_train, epochs=20, batch_size=row['batch_size'], verbose=0)
-        mse = model.evaluate(x_test, y_test)
+        model_ind.compile(optimizer=row['optimizer'], loss='mean_squared_error', metrics=['mse'])
+        model_ind.fit(x_train, y_train, epochs=20, batch_size=row['batch_size'], verbose=0)
+        mse = model_ind.evaluate(x_test, y_test)[0]
 
-        return model, mse
+        return mse
 
-    for length in range(len(df_hyper_param)):
-        row = df_hyper_param.iloc[length]
-        model, test_score = model_define_and_evaluate(row)
-        if length == 0:
-            metric_track = test_score
-            final_model = model
-        if test_score <= metric_track:
-            final_model = model
-            metric_track = test_score
+    df_hyper_param['test_error'] = df_hyper_param.apply(lambda x: model_define_and_evaluate(x), axis=1)
+    min_row_index = df_hyper_param['test_error'].idxmin()
 
-    return final_model
+    return df_hyper_param.loc[min_row_index]
 
 
 def create_set_of_hyperparameter():
