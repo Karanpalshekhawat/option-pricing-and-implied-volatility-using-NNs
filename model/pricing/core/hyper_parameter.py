@@ -23,9 +23,8 @@ def find_best_hyper_parameter_config(df_hyper_param, dt_set):
         dt_set (pd.DataFrame) : full dataset
 
     Returns:
-        Sequential
+        pd.DataFrame
     """
-    global final_model
     feature_columns = ['moneyness', 'time_to_maturity', 'risk_free_rate', 'volatility']
     input_features = dt_set[feature_columns]
     target = dt_set['opt_price_by_strike']
@@ -102,6 +101,6 @@ def run_model(dt_set):
         dt_set (pd.DataFrame) : dataset
     """
     df_hyper_param = create_set_of_hyperparameter()
-    nn_objs = find_best_hyper_parameter_config(df_hyper_param, dt_set)
+    best_hyper_param = find_best_hyper_parameter_config(df_hyper_param, dt_set)
 
-    return nn_objs
+    return best_hyper_param

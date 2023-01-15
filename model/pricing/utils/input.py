@@ -28,11 +28,14 @@ def read_input_parameters_range():
     return data
 
 
-def create_set_of_input_parameters():
+def create_set_of_input_parameters(nmb):
     """
     Using range of Input parameters defined in json file,
     a set of options parameters range is created using
     Latin hypercube sampling.
+
+    Args:
+        nmb (int) : number of option parameters to generate
 
     Returns:
         pd.DataFrame
@@ -40,7 +43,7 @@ def create_set_of_input_parameters():
     rng = read_input_parameters_range()
     dimension = len(rng)
     sampler = qmc.LatinHypercube(d=dimension)
-    sample = sampler.random(n=100000)
+    sample = sampler.random(n=nmb)
     l_bounds = [items[0] for items in rng.values()]
     u_bounds = [items[1] for items in rng.values()]
     sample_scaled = qmc.scale(sample, l_bounds, u_bounds)
