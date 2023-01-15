@@ -4,6 +4,7 @@ other modules to import data, run neural
 network model and generate parameters and then
 create output file
 """
+import pandas as pd
 
 from model import *
 
@@ -29,5 +30,10 @@ def pre_processing(nmb):
 
 
 if __name__ == "__main__":
-    dt_set_hyper = pre_processing(100000)  # for hyperparameter training
-    best_hyper_parameter = run_model(dt_set_hyper)
+    num_dt_hyper = 100000
+    dt_set_hyper = pre_processing(num_dt_hyper)  # small dataset for hyperparameter tuning
+    running_hyperparameter_tuning = False
+    if running_hyperparameter_tuning:
+        hyperparameter_tuning(dt_set_hyper)
+    file_name = r"./model/output/" + "best_hyper_parameter.pkl"
+    df_hyper = pd.read_pickle(file_name)

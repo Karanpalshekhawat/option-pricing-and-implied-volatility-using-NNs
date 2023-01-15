@@ -86,7 +86,7 @@ def create_set_of_hyperparameter():
     return pd.DataFrame(combinations, columns=columns_name)
 
 
-def run_model(dt_set):
+def hyperparameter_tuning(dt_set):
     """
     This method split data set into train, test and then
     creates model, finds the best possible hyperparameter,
@@ -102,5 +102,6 @@ def run_model(dt_set):
     """
     df_hyper_param = create_set_of_hyperparameter()
     best_hyper_param = find_best_hyper_parameter_config(df_hyper_param, dt_set)
-
-    return best_hyper_param
+    pt = r"./model/output/"
+    file_name = pt + "best_hyper_parameter.pkl"
+    best_hyper_param.to_pickle(file_name)
