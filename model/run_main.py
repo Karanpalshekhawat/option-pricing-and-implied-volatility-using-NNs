@@ -37,4 +37,6 @@ if __name__ == "__main__":
         hyperparameter_tuning(small_dtset)
     file_name = r"./model/output/" + "best_hyper_parameter.pkl"
     df_hyper = pd.read_pickle(file_name)
-    find_best_learning_rate(small_dtset, df_hyper)
+    num_dt_training = 1000000
+    big_dataset = pre_processing(num_dt_training)
+    run_nn_model(big_dataset, df_hyper)

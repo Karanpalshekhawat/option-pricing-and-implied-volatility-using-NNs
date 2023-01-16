@@ -38,10 +38,11 @@ def nn_model(row, features):
     return model_ind
 
 
-def find_best_learning_rate(dt_set, hyper_param):
+def run_nn_model(dt_set, hyper_param):
     """
-    This method find the best learning rate
+    This method runs the main model by
     using cyclical learning rate method
+    for optimizing learning rate
 
     Args:
          dt_set (pd.DataFrame) : dataset
@@ -64,4 +65,6 @@ def find_best_learning_rate(dt_set, hyper_param):
     model.compile(optimizer=optimizer, loss='mean_squared_error', metrics=['mse'])
     history = model.fit(x_train, y_train, batch_size=hyper_param['batch_size'], validation_data=(x_test, y_test),
                         epochs=100)
+    model_save_path = r"./model/output/" + "final_model.h5"
+    model.save(model_save_path)
     return history
