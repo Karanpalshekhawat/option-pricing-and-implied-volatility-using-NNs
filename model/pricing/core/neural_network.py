@@ -42,7 +42,8 @@ def run_nn_model(dt_set, hyper_param):
     """
     This method runs the main model by
     using cyclical learning rate method
-    for optimizing learning rate
+    for optimizing learning rate and then
+    save it in the output folder for reuse
 
     Args:
          dt_set (pd.DataFrame) : dataset
@@ -67,4 +68,3 @@ def run_nn_model(dt_set, hyper_param):
                         epochs=100)
     model_save_path = r"./model/output/" + "final_model.h5"
     model.save(model_save_path)
-    return history
