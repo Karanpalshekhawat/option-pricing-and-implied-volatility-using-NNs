@@ -5,6 +5,10 @@ and a method to identify the best learning rate
 
 import tensorflow as tf
 
+from sklearn.model_selection import train_test_split
+from tensorflow_addons.optimizers import CyclicalLearningRate
+
+
 def nn_model(row, features):
     """
     Just defines the model structure
@@ -18,8 +22,7 @@ def nn_model(row, features):
     """
     model_ind = tf.keras.Sequential()
     model_ind.add(tf.keras.layers.Dense(row['neurons'], activation=row['activation'],
-                                        kernel_initializer=row['initialization'],
-                                        input_shape=(features.shape[1],)))
+                                        kernel_initializer=row['initialization'], input_shape=(features,)))
     if row['batch_normalisation'] == "yes":
         model_ind.add(tf.keras.layers.BatchNormalization())
     model_ind.add(tf.keras.layers.Dense(row['neurons'], activation=row['activation'],
@@ -33,3 +36,32 @@ def nn_model(row, features):
     model_ind.add(tf.keras.layers.Dense(1))
 
     return model_ind
+
+
+def find_best_learning_rate(dt_set, hyper_param):
+    """
+    This method find the best learning rate
+    using cyclical learning rate method
+
+    Args:
+         dt_set (pd.DataFrame) : dataset
+         hyper_param (pd.DataFrame) : hyper parameters values
+    """
+    feature_columns = ['moneyness', 'time_to_maturity', 'risk_free_rate', 'volatility']
+    input_features = dt_set[feature_columns]
+    target = dt_set['opt_price_by_strike']
+    x_train, x_test, y_train, y_test = train_test_split(input_features, target, test_size=0.2, random_state=11)
+    model = nn_model(hyper_param, len(feature_columns))
+    steps_per_epoch = len(x_train) // hyper_param['batch_size']
+    clr = CyclicalLearningRate(initial_learning_rate=1e-5, maximal_learning_rate=1e-3, step_size=2 * steps_per_epoch,
+                               scale_fn=lambda x: 1 / (2.0 ** (x - 1)), scale_mode='cycle')
+    if hyper_param['optimizer'] == 'SGD':
+        optimizer = tf.keras.optimizers.SGD(clr)
+    elif hyper_param['optimizer'] == 'Adam':
+        optimizer = tf.keras.optimizers.Adam(clr)
+    else:
+        optimizer = tf.keras.optimizers.RMSprop(clr)
+    model.compile(optimizer=optimizer, loss='mean_squared_error', metrics=['mse'])
+    history = model.fit(x_train, y_train, batch_size=hyper_param['batch_size'], validation_data=(x_test, y_test),
+                        epochs=100)
+    return history

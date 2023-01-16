@@ -4,6 +4,7 @@ from model.pricing.utils.input import read_input_variables_file, create_set_of_i
 from model.pricing.utils.get_data import get_current_price
 from model.pricing.core.black_scholes import create_dataset
 from model.pricing.core.hyper_parameter import hyperparameter_tuning
+from model.pricing.core.neural_network import find_best_learning_rate
 
 __all__ = [
     'read_input_variables_file',
@@ -11,4 +12,5 @@ __all__ = [
     'create_set_of_input_parameters',
     'create_dataset',
     'hyperparameter_tuning',
+    'find_best_learning_rate',
 ]
