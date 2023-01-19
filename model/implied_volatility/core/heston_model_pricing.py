@@ -38,3 +38,23 @@ def generate_heston_paths(S, T, r, kappa, theta, v_0, rho, xi, steps, Npaths):
         prices[:, t] = s_t
 
     return prices
+
+
+def create_heston_dataset(df, s0, input_param):
+    """
+    This method takes current underlying price and
+    a set of other parameters and then computes each
+    option heston model price using numerical method
+
+    Args:
+        df (pd.DataFrame) : input variables dataframe
+        s0 (float) : current underlying price
+        input_param (pd.DataFrame) : contains info about money-ness,
+                                    time, rfr, volatility to create dataset
+
+    Returns:
+         pd.DataFrame
+    """
+    input_param['s0'] = s0
+    input_param['strike'] = input_param.apply(lambda x: x['s0'] / x['moneyness'], axis=1)
+    return
