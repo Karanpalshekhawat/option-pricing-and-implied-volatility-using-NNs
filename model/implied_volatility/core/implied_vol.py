@@ -1,7 +1,13 @@
 """
-This module contains newton raphson numerical
-method to compute implied volatility of an option
+This module contains brent method to
+compute implied volatility of an option
 give heston price and other parameters
+
+Advanatage of using brent method is that
+it's derivative free.
+
+Newton raphson method fails as vega is close
+to 0 for Deep OTM or ITM options
 """
 
 import numpy as np
@@ -32,17 +38,13 @@ def compute_vega(S, K, T, r, sigma):
     return vega
 
 
-def implied_volatility_call(C, S, K, T, r):
+def implied_volatility_call(row):
     """
     This method compute implied volatility
-    using newton raphson method
+    using brent method which is derivative free
 
     Args:
-        C: Observed call price
-        S: Asset price
-        K: Strike price
-        T: Time to Maturity
-        r: risk-free rate
+        row (pd.DataFrame) : input parameter
 
     Returns:
         implied volatility in percent
@@ -52,20 +54,21 @@ def implied_volatility_call(C, S, K, T, r):
     sigma = 0.3  # initial prediction
 
     param = {
-        'strike': K,
-        's0': S,
-        'risk_free_rate': r,
-        'calender_days': T * 365,
+        'strike': row['strike'],
+        's0': row['s0'],
+        'risk_free_rate': row['risk_free_rate'],
+        'calender_days': row['calender_days'],
         'volatility': sigma,
         'european': True,
         'kind': 'call'
     }
     data_param = pd.Series(param)
     for i in range(max_iterations):
-        diff = get_bs_price(data_param) - C
+        diff = get_bs_price(data_param) - row['Heston_price']
         if abs(diff) < tol:
             break
 
-        sigma = sigma - diff / compute_vega(S, K, T, r, sigma)
+        sigma = sigma - diff / compute_vega(row['s0'], row['strike'], row['time_to_maturity'], row['risk_free_rate'],
+                                            sigma)
 
     return sigma

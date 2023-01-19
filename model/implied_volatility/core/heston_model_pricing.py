@@ -5,6 +5,7 @@ parameters
 """
 
 import numpy as np
+from model.implied_volatility.core.implied_vol import implied_volatility_call
 
 
 def get_heston_price(row):
@@ -66,5 +67,6 @@ def create_heston_dataset(df, s0, input_param):
     input_param['european'] = True if df['opt_type'].iloc[0] == "european" else False
     input_param['kind'] = "call" if df['opt_kind'].iloc[0] == "call" else "put"
     input_param['Heston_price'] = input_param.apply(lambda x: get_heston_price(x), axis=1)
+    input_param['implied_vol'] = input_param.apply(lambda x: implied_volatility_call(x), axis=1)
 
     return
