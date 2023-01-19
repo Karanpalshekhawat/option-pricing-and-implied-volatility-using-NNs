@@ -41,6 +41,6 @@ def pre_processing(nmb, fltr):
     df = read_input_variables_file()
     ticker = df['ticker'].iloc[0]
     st_current_price = get_current_price(ticker)
-    range_of_inputs = create_set_of_input_parameters(nmb)
+    range_of_inputs = create_set_of_input_parameters(nmb, fltr)
 
     return df, st_current_price, range_of_inputs
