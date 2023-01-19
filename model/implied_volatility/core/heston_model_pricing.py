@@ -7,28 +7,28 @@ parameters
 import numpy as np
 
 
-def generate_heston_paths(S, T, r, kappa, theta, v_0, rho, xi, steps, Npaths):
+def get_heston_price(row):
     """
     Generates simultaneous simulation of stock price and
     volatility process to solve for final price using numerical method
 
     Args:
-        S : initial stock price
-        T : time to maturity
-        r : risk-free rate
-        kappa : volatility mean reverting speed
-        theta : long term variance
-        v_0 : initial variance
-        rho : correlation coefficient between wiener processes of stock and volatility evolution
-        xi : vol-vol or volatility of the variance
-        steps : numbers of steps in dt
-        Npaths : number of simulation meaning number of experiments to find final price
+        row (pd.DataFrame) : input parameters for an option
     """
-    dt = T / steps
+    steps = 2000
+    Npaths = 10000
+    dt = row['time_to_maturity'] / steps
     size = (Npaths, steps)
     prices = np.zeros(size)
-    s_t = S
-    v_t = v_0
+    K = row['strike']
+    s_t = row['s0']
+    v_t = row['initial_variance']
+    rho = row['correlation']
+    kappa = row['reversion_speed']  # mean reversion speed
+    xi = row['vol_vol']
+    theta = row['Long_average_variance']
+    r = row['risk_free_rate']
+    T = row['time_to_maturity']
     for t in range(steps):
         WT = np.random.multivariate_normal(np.array([0, 0]), cov=np.array([[1, rho], [rho, 1]]),
                                            size=Npaths) * np.sqrt(dt)
@@ -37,7 +37,13 @@ def generate_heston_paths(S, T, r, kappa, theta, v_0, rho, xi, steps, Npaths):
         v_t = np.abs(v_t + kappa * (theta - v_t) * dt + xi * np.sqrt(v_t) * WT[:, 1])
         prices[:, t] = s_t
 
-    return prices
+    final_state_price = prices[:, -1]
+    if row['kind'] == "call":
+        opt_price = np.mean(np.maximum(final_state_price - K, 0)) * np.exp(-r * T)
+    else:
+        opt_price = np.mean(np.maximum(K - final_state_price, 0)) * np.exp(-r * T)
+
+    return opt_price
 
 
 def create_heston_dataset(df, s0, input_param):
@@ -57,4 +63,8 @@ def create_heston_dataset(df, s0, input_param):
     """
     input_param['s0'] = s0
     input_param['strike'] = input_param.apply(lambda x: x['s0'] / x['moneyness'], axis=1)
+    input_param['european'] = True if df['opt_type'].iloc[0] == "european" else False
+    input_param['kind'] = "call" if df['opt_kind'].iloc[0] == "call" else "put"
+    input_param['Heston_price'] = input_param.apply(lambda x: get_heston_price(x), axis=1)
+
     return
