@@ -74,5 +74,5 @@ def run_nn_model(dt_set, hyper_param, feature_columns, target):
     model.compile(optimizer=optimizer, loss='mean_squared_error', metrics=['mse', 'mae'])
     history = model.fit(x_train, y_train, batch_size=hyper_param['batch_size'], validation_data=(x_test, y_test),
                         epochs=100)
-    model_save_path = r"./model/output/" + "final_model.h5"
-    model.save(model_save_path)
+
+    return model
