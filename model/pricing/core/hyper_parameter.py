@@ -4,22 +4,22 @@ and also tune the hyperparameter, store them to
 a output file and test accuracy
 """
 
-import itertools
 import pandas as pd
 import numpy as np
 import tensorflow as tf
-from sklearn.model_selection import train_test_split, RandomizedSearchCV
 
+from sklearn.model_selection import train_test_split, RandomizedSearchCV, KFold
+from scikeras.wrappers import KerasClassifier
 from model.pricing.utils.input import read_hyper_parameters_range
 
 
-def find_best_hyper_parameter_config(df_hyper_param, dt_set):
+def find_best_hyper_parameter_config(param_grid, dt_set):
     """
     This method creates the neural network
-    architecture for a particular set of hyperparameter
+    architecture for a given set of hyperparameter
 
     Args:
-        df_hyper_param (pd.DataFrame) : multiple choices for hyperparameter selection
+        param_grid (dict) : multiple choices for hyperparameter selection
         dt_set (pd.DataFrame) : full dataset
 
     Returns:
@@ -30,33 +30,33 @@ def find_best_hyper_parameter_config(df_hyper_param, dt_set):
     target = dt_set['opt_price_by_strike']
     x_train, x_test, y_train, y_test = train_test_split(input_features, target, test_size=0.2, random_state=11)
 
-    def model_define_and_evaluate(row):
+    def create_model(neuron=200, activation="relu", initialization="uniform", batch_normalisation="yes",
+                     optimizer="SGD", drop_out_rate=0.0):
         """Define model and test it"""
         model_ind = tf.keras.Sequential()
-        model_ind.add(tf.keras.layers.Dense(row['neurons'], activation=row['activation'],
-                                            kernel_initializer=row['initialization'],
+        model_ind.add(tf.keras.layers.Dense(neuron, activation=activation, kernel_initializer=initialization,
                                             input_shape=(input_features.shape[1],)))
-        if row['batch_normalisation'] == "yes":
+        if batch_normalisation == "yes":
             model_ind.add(tf.keras.layers.BatchNormalization())
-        model_ind.add(tf.keras.layers.Dense(row['neurons'], activation=row['activation'],
-                                            kernel_initializer=row['initialization']))
-        if row['batch_normalisation'] == "yes":
+        model_ind.add(tf.keras.layers.Dense(neuron, activation=activation, kernel_initializer=initialization))
+        if batch_normalisation == "yes":
             model_ind.add(tf.keras.layers.BatchNormalization())
-        model_ind.add(tf.keras.layers.Dense(row['neurons'], activation=row['activation'],
-                                            kernel_initializer=row['initialization']))
-        if row['batch_normalisation'] == "yes":
+        model_ind.add(tf.keras.layers.Dropout(drop_out_rate))
+        model_ind.add(tf.keras.layers.Dense(neuron, activation=activation, kernel_initializer=initialization))
+        if batch_normalisation == "yes":
             model_ind.add(tf.keras.layers.BatchNormalization())
+        model_ind.add(tf.keras.layers.Dropout(drop_out_rate))
         model_ind.add(tf.keras.layers.Dense(1))
-        model_ind.compile(optimizer=row['optimizer'], loss='mean_squared_error', metrics=['mse'])
-        model_ind.fit(x_train, y_train, epochs=20, batch_size=row['batch_size'], verbose=0)
-        mse = model_ind.evaluate(x_test, y_test)[0]
+        model_ind.compile(optimizer=optimizer, loss='mean_squared_error', metrics=['mse'])
 
-        return mse
+        return model_ind
 
-    df_hyper_param['test_error'] = df_hyper_param.apply(lambda x: model_define_and_evaluate(x), axis=1)
-    min_row_index = df_hyper_param['test_error'].idxmin()
+    k_model = KerasClassifier(build_fn=create_model, verbose=1)
+    grid = RandomizedSearchCV(estimator=k_model, cv=KFold(3), param_distributions=param_grid, verbose=1, n_iter=3,
+                              n_jobs=-1, scoring="neg_mean_squared_error")
+    grid_results = grid.fit(x_train, y_train, epochs=100, verbose=0)
 
-    return df_hyper_param.loc[min_row_index]
+    return grid_results.best_params_
 
 
 def create_set_of_hyperparameter():
@@ -70,10 +70,10 @@ def create_set_of_hyperparameter():
     """
     hyper_parameters = read_hyper_parameters_range()
     param_grid = {
-        'activation_func': hyper_parameters['activation'],
-        'neuron_list': list(np.arange(hyper_parameters['neurons'][0], hyper_parameters['neurons'][1], 100)),
+        'activation': hyper_parameters['activation'],
+        'neuron': list(np.arange(hyper_parameters['neurons'][0], hyper_parameters['neurons'][1], 100)),
         'drop_out_rate': hyper_parameters['dropout_rate'],
-        'initialization_param': hyper_parameters['initialization'],
+        'initialization': hyper_parameters['initialization'],
         'batch_normalisation': hyper_parameters['batch_normalisation'],
         'optimizer': hyper_parameters['optimizer'],
         'batch_size': list(np.arange(hyper_parameters['batch_size'][0], hyper_parameters['batch_size'][1], 256))
@@ -96,8 +96,8 @@ def hyperparameter_tuning(dt_set):
     Args:
         dt_set (pd.DataFrame) : dataset
     """
-    df_hyper_param = create_set_of_hyperparameter()
-    best_hyper_param = find_best_hyper_parameter_config(df_hyper_param, dt_set)
+    param_grid = create_set_of_hyperparameter()
+    best_hyper_param = find_best_hyper_parameter_config(param_grid, dt_set)
     pt = r"./model/output/"
     file_name = pt + "best_hyper_parameter.pkl"
     best_hyper_param.to_pickle(file_name)
