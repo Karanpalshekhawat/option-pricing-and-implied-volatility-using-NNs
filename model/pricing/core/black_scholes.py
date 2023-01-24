@@ -48,5 +48,5 @@ def create_dataset(df, s0, input_param):
     input_param['kind'] = "call" if df['opt_kind'].iloc[0] == "call" else "put"
     input_param['BS_price'] = input_param.apply(lambda x: get_bs_price(x), axis=1)
     input_param['opt_price_by_strike'] = input_param.apply(lambda x: x['BS_price'] / x['strike'], axis=1)
-    columns_required = ['moneyness', 'time_to_maturity', 'risk_free_rate', 'volatility', 'opt_price_by_strike']
-    return input_param[columns_required]
+
+    return input_param

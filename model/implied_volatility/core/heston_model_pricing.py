@@ -71,4 +71,4 @@ def create_heston_dataset(df, s0, input_param):
     input_param['Heston_price'] = input_param.apply(lambda x: get_heston_price(x), axis=1)
     input_param['implied_vol'] = input_param.apply(lambda x: implied_volatility_call(x), axis=1)
 
-    return
+    return input_param

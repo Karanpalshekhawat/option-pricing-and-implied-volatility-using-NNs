@@ -82,7 +82,7 @@ def read_hyper_parameters_range():
         dict
     """
     pt = r"./model/static_data/"
-    json_file = pt + "hyper-parameters-bs-range.json"
+    json_file = pt + "hyper-parameters-range.json"
     with open(json_file) as f:
         data = json.load(f)
 

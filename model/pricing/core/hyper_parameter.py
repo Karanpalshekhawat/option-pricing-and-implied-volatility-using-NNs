@@ -8,7 +8,7 @@ import itertools
 import pandas as pd
 import numpy as np
 import tensorflow as tf
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, RandomizedSearchCV
 
 from model.pricing.utils.input import read_hyper_parameters_range
 
@@ -69,21 +69,17 @@ def create_set_of_hyperparameter():
          pd.DataFrame
     """
     hyper_parameters = read_hyper_parameters_range()
-    activation_func = hyper_parameters['activation']
-    neuron_list = list(np.arange(hyper_parameters['neurons'][0], hyper_parameters['neurons'][1], 100))
-    drop_out_rate = hyper_parameters['dropout_rate']
-    initialization_param = hyper_parameters['initialization']
-    batch_normalisation = hyper_parameters['batch_normalisation']
-    optimizer = hyper_parameters['optimizer']
-    batch_size = list(np.arange(hyper_parameters['batch_size'][0], hyper_parameters['batch_size'][1], 256))
+    param_grid = {
+        'activation_func': hyper_parameters['activation'],
+        'neuron_list': list(np.arange(hyper_parameters['neurons'][0], hyper_parameters['neurons'][1], 100)),
+        'drop_out_rate': hyper_parameters['dropout_rate'],
+        'initialization_param': hyper_parameters['initialization'],
+        'batch_normalisation': hyper_parameters['batch_normalisation'],
+        'optimizer': hyper_parameters['optimizer'],
+        'batch_size': list(np.arange(hyper_parameters['batch_size'][0], hyper_parameters['batch_size'][1], 256))
+    }
 
-    ls_param = [activation_func, neuron_list, drop_out_rate, initialization_param, batch_normalisation, optimizer,
-                batch_size]
-    combinations = list(itertools.product(*ls_param))
-    columns_name = ['activation', 'neurons', 'drop_out', 'initialization', 'batch_normalisation', 'optimizer',
-                    'batch_size']
-
-    return pd.DataFrame(combinations, columns=columns_name)
+    return param_grid
 
 
 def hyperparameter_tuning(dt_set):
