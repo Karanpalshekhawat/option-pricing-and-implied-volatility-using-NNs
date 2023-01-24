@@ -9,7 +9,7 @@ import numpy as np
 import tensorflow as tf
 
 from sklearn.model_selection import train_test_split, RandomizedSearchCV, KFold
-from scikeras.wrappers import KerasClassifier
+from scikeras.wrappers import KerasRegressor
 from model.pricing.utils.input import read_hyper_parameters_range
 
 
@@ -51,7 +51,8 @@ def find_best_hyper_parameter_config(param_grid, dt_set):
 
         return model_ind
 
-    k_model = KerasClassifier(build_fn=create_model, verbose=1)
+    k_model = KerasRegressor(model=create_model, verbose=0, neuron=None, activation=None, initialization=None,
+                             batch_normalisation=None, drop_out_rate=None)
     grid = RandomizedSearchCV(estimator=k_model, cv=KFold(3), param_distributions=param_grid, verbose=1, n_iter=3,
                               n_jobs=-1, scoring="neg_mean_squared_error")
     grid_results = grid.fit(x_train, y_train, epochs=100, verbose=0)
