@@ -38,6 +38,7 @@ def find_best_hyper_parameter_config(param_grid, dt_set):
                                             input_shape=(input_features.shape[1],)))
         if batch_normalisation == "yes":
             model_ind.add(tf.keras.layers.BatchNormalization())
+        model_ind.add(tf.keras.layers.Dropout(drop_out_rate))
         model_ind.add(tf.keras.layers.Dense(neuron, activation=activation, kernel_initializer=initialization))
         if batch_normalisation == "yes":
             model_ind.add(tf.keras.layers.BatchNormalization())
@@ -53,7 +54,7 @@ def find_best_hyper_parameter_config(param_grid, dt_set):
 
     k_model = KerasRegressor(model=create_model, verbose=0, neuron=None, activation=None, initialization=None,
                              batch_normalisation=None, drop_out_rate=None)
-    grid = RandomizedSearchCV(estimator=k_model, cv=KFold(3), param_distributions=param_grid, verbose=1, n_iter=3,
+    grid = RandomizedSearchCV(estimator=k_model, cv=KFold(3), param_distributions=param_grid, verbose=1, n_iter=200,
                               n_jobs=-1, scoring="neg_mean_squared_error")
     grid_results = grid.fit(x_train, y_train, epochs=100, verbose=0)
 

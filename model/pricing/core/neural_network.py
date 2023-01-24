@@ -25,20 +25,26 @@ def nn_model(row, features):
                                         kernel_initializer=row['initialization'], input_shape=(features,)))
     if row['batch_normalisation'] == "yes":
         model_ind.add(tf.keras.layers.BatchNormalization())
+    model_ind.add(tf.keras.layers.Dropout(row['drop_out_rate']))
+
     model_ind.add(tf.keras.layers.Dense(row['neurons'], activation=row['activation'],
                                         kernel_initializer=row['initialization']))
     if row['batch_normalisation'] == "yes":
         model_ind.add(tf.keras.layers.BatchNormalization())
+    model_ind.add(tf.keras.layers.Dropout(row['drop_out_rate']))
+
     model_ind.add(tf.keras.layers.Dense(row['neurons'], activation=row['activation'],
                                         kernel_initializer=row['initialization']))
     if row['batch_normalisation'] == "yes":
         model_ind.add(tf.keras.layers.BatchNormalization())
+    model_ind.add(tf.keras.layers.Dropout(row['drop_out_rate']))
+
     model_ind.add(tf.keras.layers.Dense(1))
 
     return model_ind
 
 
-def run_nn_model(dt_set, hyper_param):
+def run_nn_model(dt_set, hyper_param, feature_columns, target):
     """
     This method runs the main model by
     using cyclical learning rate method
@@ -48,10 +54,11 @@ def run_nn_model(dt_set, hyper_param):
     Args:
          dt_set (pd.DataFrame) : dataset
          hyper_param (pd.DataFrame) : hyper parameters values
+         feature_columns (list) : input features columns
+         target (str): target column
     """
-    feature_columns = ['moneyness', 'time_to_maturity', 'risk_free_rate', 'volatility']
     input_features = dt_set[feature_columns]
-    target = dt_set['opt_price_by_strike']
+    target = dt_set[target]
     x_train, x_test, y_train, y_test = train_test_split(input_features, target, test_size=0.2, random_state=11)
     model = nn_model(hyper_param, len(feature_columns))
     steps_per_epoch = len(x_train) // hyper_param['batch_size']

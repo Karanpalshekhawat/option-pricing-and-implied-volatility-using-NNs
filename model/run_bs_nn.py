@@ -23,5 +23,7 @@ if __name__ == "__main__":
     file_name = r"./model/output/" + "best_hyper_parameter.pkl"
     df_hyper = pd.read_pickle(file_name)
     df, st_current_price, range_of_inputs = pre_processing(args.num_dt_training, "BS")
-    big_dataset = create_dataset(df, st_current_price, range_of_inputs) # big dataset for NN model
-    run_nn_model(big_dataset, df_hyper)
+    big_dataset = create_dataset(df, st_current_price, range_of_inputs)  # big dataset for NN model
+    feature_columns = ['moneyness', 'time_to_maturity', 'risk_free_rate', 'volatility']
+    target = 'opt_price_by_strike'
+    run_nn_model(big_dataset, df_hyper, feature_columns, target)
