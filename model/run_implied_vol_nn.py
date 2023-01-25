@@ -1,10 +1,16 @@
 """
-This module runs other modules creates dataset using
-lating hypercube sampling and for a particular set of
-option parameters, it finds out heston price using
-numerical method, implied volatility for that heston price
-using brent method and then build a neural network model
-learn the non-linear relationship.
+This module runs other modules which creates a dataset
+that can be used to compute implied volatility using the brent
+method for a given black-scholes price and then
+build a neural network model learn non-linear relationship.
+
+This model is further used combine with Heston NN model
+to understand how well we can replicate numerical methods
+and to construct volatility smile-skew observed in the real market.
+
+Note that the model is built on learning the relationship between
+time value of option (subtracting intrinsic value) as per section 4.3
+of the literature document
 """
 import pandas as pd
 import argparse
@@ -15,7 +21,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Take number of data required for running model', add_help=False)
     parser.add_argument('-t', '--num_dt_training', type=int, help='Actual model run dataset size')
     args = parser.parse_args()
-    df, st_current_price, range_of_inputs = pre_processing(args.num_dt_training, "HESTON")
+    df, st_current_price, range_of_inputs = pre_processing(args.num_dt_training, "BS")
     big_dataset = create_heston_dataset(df, st_current_price, range_of_inputs)
     file_name = r"./model/output/" + "best_hyper_parameter.pkl"
     df_hyper = pd.read_pickle(file_name)
