@@ -4,6 +4,7 @@ and also tune the hyperparameter, store them to
 a output file and test accuracy
 """
 
+import pickle
 import pandas as pd
 import numpy as np
 import tensorflow as tf
@@ -29,6 +30,8 @@ def find_best_hyper_parameter_config(param_grid, dt_set):
     input_features = dt_set[feature_columns]
     target = dt_set['opt_price_by_strike']
     x_train, x_test, y_train, y_test = train_test_split(input_features, target, test_size=0.2, random_state=11)
+    x_train = np.float32(x_train)
+    y_train = np.float32(y_train)
 
     def create_model(neuron=200, activation="relu", initialization="uniform", batch_normalisation="yes",
                      optimizer="SGD", drop_out_rate=0.0):
@@ -54,8 +57,8 @@ def find_best_hyper_parameter_config(param_grid, dt_set):
 
     k_model = KerasRegressor(model=create_model, verbose=0, neuron=None, activation=None, initialization=None,
                              batch_normalisation=None, drop_out_rate=None)
-    grid = RandomizedSearchCV(estimator=k_model, cv=KFold(3), param_distributions=param_grid, verbose=1, n_iter=200,
-                              n_jobs=-1, scoring="neg_mean_squared_error")
+    grid = RandomizedSearchCV(estimator=k_model, cv=KFold(3), param_distributions=param_grid, verbose=1, n_iter=3,
+                              n_jobs=-1, scoring="neg_mean_squared_error", error_score="raise")
     grid_results = grid.fit(x_train, y_train, epochs=100, verbose=0)
 
     return grid_results.best_params_
@@ -65,7 +68,6 @@ def create_set_of_hyperparameter():
     """
     This method first reads the hyperparameter range
     and then creates a dataframe of hyperparameter
-    with each row contains unique set of hyperparameter
 
     Returns:
          pd.DataFrame
@@ -101,5 +103,6 @@ def hyperparameter_tuning(dt_set):
     param_grid = create_set_of_hyperparameter()
     best_hyper_param = find_best_hyper_parameter_config(param_grid, dt_set)
     pt = r"./model/output/"
-    file_name = pt + "best_hyper_parameter.pkl"
-    best_hyper_param.to_pickle(file_name)
+    file_name = pt + "best_hyper_parameter.p"
+    with open(file_name, 'wb') as fp:
+        pickle.dump(best_hyper_param, fp, protocol=pickle.HIGHEST_PROTOCOL)

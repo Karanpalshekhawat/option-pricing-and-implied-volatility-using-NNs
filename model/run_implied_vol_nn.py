@@ -23,7 +23,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     df, st_current_price, range_of_inputs = pre_processing(args.num_dt_training, "BS")
     big_dataset = create_implied_vol_dataset(df, st_current_price, range_of_inputs)
-    file_name = r"./model/output/" + "best_hyper_parameter.pkl"
+    file_name = r"./model/output/" + "best_hyper_parameter.p"
     df_hyper = pd.read_pickle(file_name)
     feature_columns = ['moneyness', 'time_to_maturity', 'risk_free_rate', 'scaled_time_value']
     target = 'volatility'

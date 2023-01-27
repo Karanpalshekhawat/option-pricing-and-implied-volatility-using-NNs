@@ -21,7 +21,7 @@ if __name__ == "__main__":
     running_hyperparameter_tuning = False
     if running_hyperparameter_tuning:
         hyperparameter_tuning(small_dt_set)
-    file_name = r"./model/output/" + "best_hyper_parameter.pkl"
+    file_name = r"./model/output/" + "best_hyper_parameter.p"
     df_hyper = pd.read_pickle(file_name)
     df, st_current_price, range_of_inputs = pre_processing(args.num_dt_training, "BS")
     big_dataset = create_dataset(df, st_current_price, range_of_inputs)  # big dataset for NN model
