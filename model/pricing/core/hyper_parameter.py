@@ -4,7 +4,7 @@ and also tune the hyperparameter, store them to
 a output file and test accuracy
 """
 
-import pickle
+import json
 import pandas as pd
 import numpy as np
 import tensorflow as tf
@@ -86,6 +86,17 @@ def create_set_of_hyperparameter():
     return param_grid
 
 
+class NpEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, np.integer):
+            return int(obj)
+        if isinstance(obj, np.floating):
+            return float(obj)
+        if isinstance(obj, np.ndarray):
+            return obj.tolist()
+        return super(NpEncoder, self).default(obj)
+
+
 def hyperparameter_tuning(dt_set):
     """
     This method split data set into train, test and then
@@ -103,6 +114,6 @@ def hyperparameter_tuning(dt_set):
     param_grid = create_set_of_hyperparameter()
     best_hyper_param = find_best_hyper_parameter_config(param_grid, dt_set)
     pt = r"./model/output/"
-    file_name = pt + "best_hyper_parameter.p"
-    with open(file_name, 'wb') as fp:
-        pickle.dump(best_hyper_param, fp, protocol=pickle.HIGHEST_PROTOCOL)
+    file_name = pt + "best_hyper_parameter.json"
+    with open(file_name, 'w') as fp:
+        json.dump(best_hyper_param, fp, cls=NpEncoder)

@@ -17,8 +17,8 @@ if __name__ == "__main__":
     args = parser.parse_args()
     df, st_current_price, range_of_inputs = pre_processing(args.num_dt_training, "HESTON")
     big_dataset = create_heston_dataset(df, st_current_price, range_of_inputs)
-    file_name = r"./model/output/" + "best_hyper_parameter.p"
-    df_hyper = pd.read_pickle(file_name)
+    file_name = r"./model/output/" + "best_hyper_parameter.json"
+    df_hyper = pd.read_json(file_name)
     feature_columns = ['moneyness', 'time_to_maturity', 'risk_free_rate', 'correlation', 'reversion_speed',
                        'Long_average_variance', 'vol_vol', 'initial_variance']
     target = 'opt_price_by_strike'
