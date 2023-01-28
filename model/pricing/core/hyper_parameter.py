@@ -33,20 +33,20 @@ def find_best_hyper_parameter_config(param_grid, dt_set):
     x_train = np.float32(x_train)
     y_train = np.float32(y_train)
 
-    def create_model(neuron=200, activation="relu", initialization="uniform", batch_normalisation="yes",
+    def create_model(neurons=200, activation="relu", initialization="uniform", batch_normalisation="yes",
                      optimizer="SGD", drop_out_rate=0.0):
         """Define model and test it"""
         model_ind = tf.keras.Sequential()
-        model_ind.add(tf.keras.layers.Dense(neuron, activation=activation, kernel_initializer=initialization,
+        model_ind.add(tf.keras.layers.Dense(neurons, activation=activation, kernel_initializer=initialization,
                                             input_shape=(input_features.shape[1],)))
         if batch_normalisation == "yes":
             model_ind.add(tf.keras.layers.BatchNormalization())
         model_ind.add(tf.keras.layers.Dropout(drop_out_rate))
-        model_ind.add(tf.keras.layers.Dense(neuron, activation=activation, kernel_initializer=initialization))
+        model_ind.add(tf.keras.layers.Dense(neurons, activation=activation, kernel_initializer=initialization))
         if batch_normalisation == "yes":
             model_ind.add(tf.keras.layers.BatchNormalization())
         model_ind.add(tf.keras.layers.Dropout(drop_out_rate))
-        model_ind.add(tf.keras.layers.Dense(neuron, activation=activation, kernel_initializer=initialization))
+        model_ind.add(tf.keras.layers.Dense(neurons, activation=activation, kernel_initializer=initialization))
         if batch_normalisation == "yes":
             model_ind.add(tf.keras.layers.BatchNormalization())
         model_ind.add(tf.keras.layers.Dropout(drop_out_rate))
@@ -75,7 +75,7 @@ def create_set_of_hyperparameter():
     hyper_parameters = read_hyper_parameters_range()
     param_grid = {
         'activation': hyper_parameters['activation'],
-        'neuron': list(np.arange(hyper_parameters['neurons'][0], hyper_parameters['neurons'][1], 100)),
+        'neurons': list(np.arange(hyper_parameters['neurons'][0], hyper_parameters['neurons'][1], 100)),
         'drop_out_rate': hyper_parameters['dropout_rate'],
         'initialization': hyper_parameters['initialization'],
         'batch_normalisation': hyper_parameters['batch_normalisation'],

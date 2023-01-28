@@ -73,6 +73,6 @@ def run_nn_model(dt_set, hyper_param, feature_columns, target):
         optimizer = tf.keras.optimizers.RMSprop(clr)
     model.compile(optimizer=optimizer, loss='mean_squared_error', metrics=['mse', 'mae'])
     history = model.fit(x_train, y_train, batch_size=hyper_param['batch_size'], validation_data=(x_test, y_test),
-                        epochs=100)
+                        epochs=30, verbose=0)
 
-    return model
+    return model, history

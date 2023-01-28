@@ -28,6 +28,6 @@ if __name__ == "__main__":
     big_dataset = create_dataset(df, st_current_price, range_of_inputs)  # big dataset for NN model
     feature_columns = ['moneyness', 'time_to_maturity', 'risk_free_rate', 'volatility']
     target = 'opt_price_by_strike'
-    model = run_nn_model(big_dataset, df_hyper, feature_columns, target)
+    model, training_history = run_nn_model(big_dataset, df_hyper, feature_columns, target)
     model_save_path = r"./model/output/" + "BS_NN_model.h5"
     model.save(model_save_path)
