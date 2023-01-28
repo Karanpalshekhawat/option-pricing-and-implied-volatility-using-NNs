@@ -6,7 +6,7 @@ numerical method, implied volatility for that heston price
 using brent method and then build a neural network model
 learn the non-linear relationship.
 """
-import pandas as pd
+import json
 import argparse
 
 from model import *
@@ -18,7 +18,8 @@ if __name__ == "__main__":
     df, st_current_price, range_of_inputs = pre_processing(args.num_dt_training, "HESTON")
     big_dataset = create_heston_dataset(df, st_current_price, range_of_inputs)
     file_name = r"./model/output/" + "best_hyper_parameter.json"
-    df_hyper = pd.read_json(file_name)
+    with open(file_name) as f:
+        df_hyper = json.load(f)
     feature_columns = ['moneyness', 'time_to_maturity', 'risk_free_rate', 'correlation', 'reversion_speed',
                        'Long_average_variance', 'vol_vol', 'initial_variance']
     target = 'opt_price_by_strike'

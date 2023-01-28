@@ -4,7 +4,7 @@ other modules to import data, run neural
 network model and generate parameters and then
 create output file for pricing options
 """
-import pandas as pd
+import json
 import argparse
 
 from model import *
@@ -22,7 +22,8 @@ if __name__ == "__main__":
     if running_hyperparameter_tuning:
         hyperparameter_tuning(small_dt_set)
     file_name = r"./model/output/" + "best_hyper_parameter.json"
-    df_hyper = pd.read_json(file_name)
+    with open(file_name) as f:
+        df_hyper = json.load(f)
     df, st_current_price, range_of_inputs = pre_processing(args.num_dt_training, "BS")
     big_dataset = create_dataset(df, st_current_price, range_of_inputs)  # big dataset for NN model
     feature_columns = ['moneyness', 'time_to_maturity', 'risk_free_rate', 'volatility']
