@@ -69,7 +69,7 @@ def create_heston_dataset(df, s0, input_param):
     input_param['calender_days'] = input_param.apply(lambda x: x['time_to_maturity'] * 365, axis=1)
     input_param['calender_days'] = input_param['calender_days'].round().astype(int)
     input_param['Heston_price'] = input_param.apply(lambda x: get_heston_price(x), axis=1)
-    input_param['implied_vol'] = input_param.apply(lambda x: implied_volatility_call(x), axis=1)
+    #input_param['implied_vol'] = input_param.apply(lambda x: implied_volatility_call(x), axis=1)
     input_param['opt_price_by_strike'] = input_param.apply(lambda x: x['Heston_price'] / x['strike'], axis=1)
 
     return input_param
