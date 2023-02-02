@@ -36,7 +36,12 @@ def implied_volatility_call(row):
         row['volatility'] = sigma
         return row['Heston_price'] - get_bs_price(row)
 
-    return brentq(difference, 0.001, 10, maxiter=1000)
+    try:
+        imp_vol = brentq(difference, 0.001, 10, maxiter=1000)
+    except:
+        imp_vol = row['initial_variance']
+
+    return imp_vol
 
 
 def get_time_value(row):
