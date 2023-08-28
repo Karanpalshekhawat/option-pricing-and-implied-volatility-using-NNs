@@ -30,15 +30,23 @@ def get_heston_price(row):
     theta = row['Long_average_variance']
     r = row['risk_free_rate']
     T = row['time_to_maturity']
-    for t in range(steps):
-        WT = np.random.multivariate_normal(np.array([0, 0]), cov=np.array([[1, rho], [rho, 1]]),
-                                           size=Npaths) * np.sqrt(dt)
 
-        s_t = s_t * (np.exp((r - 0.5 * v_t) * dt + np.sqrt(v_t) * WT[:, 0]))
-        v_t = np.abs(v_t + kappa * (theta - v_t) * dt + xi * np.sqrt(v_t) * WT[:, 1])
-        prices[:, t] = s_t
+    asset_paths = np.zeros((steps + 1, Npaths))
+    volatility_paths = np.zeros((steps + 1, Npaths))
+    asset_paths[0] = s_t
+    volatility_paths[0] = v_t
 
-    final_state_price = prices[:, -1]
+    dW1 = np.random.normal(size=(steps, Npaths)) * np.sqrt(dt)
+    dW2 = rho * dW1 + np.sqrt(1 - rho ** 2) * np.random.normal(size=(steps, Npaths)) * np.sqrt(dt)
+
+    for t in range(1, steps + 1):
+        dV = kappa * (theta - volatility_paths[t - 1]) * dt + v_t * np.sqrt(volatility_paths[t - 1]) * dW2[t - 1]
+        volatility_paths[t] = np.maximum(volatility_paths[t - 1] + dV, 0)  # Ensure volatility remains non-negative
+
+        dS = r * asset_paths[t - 1] * dt + np.sqrt(volatility_paths[t - 1]) * asset_paths[t - 1] * dW1[t - 1]
+        asset_paths[t] = np.maximum(asset_paths[t - 1] * dS, 0)  # Ensure asset price remains non-negative
+
+    final_state_price = asset_paths[:, -1]
     if row['kind'] == "call":
         opt_price = np.mean(np.maximum(final_state_price - K, 0)) * np.exp(-r * T)
     else:

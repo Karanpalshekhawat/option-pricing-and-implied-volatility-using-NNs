@@ -58,7 +58,7 @@ install_requires = read_requirements('requirements.txt')
 long_description = read_utf8('README.md')
 short_description = "An approach to learn non linear relationship between option parameters and its price using /" \
                     "Deep Neural Network"""
-url = 'https://github.com/Karanpalshekhawat/pricing-options-and-computing-implied-volatility-using-deep-neural-network'
+url = 'https://github.com/Karanpalshekhawat/option-pricing-and-implied-volatility-using-NNs'
 
 setup(
     name='option-price-using-NN',
